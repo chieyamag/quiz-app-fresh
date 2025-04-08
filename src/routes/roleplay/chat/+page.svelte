@@ -1,5 +1,4 @@
 <script lang="ts">
-<<<<<<< HEAD
   import { page } from '$app/stores';
   import { scenarios } from '$lib/data/scenarios';
   import { get } from 'svelte/store';
@@ -133,82 +132,3 @@
     margin-top: 1rem;
   }
 </style>
-=======
-    import { page } from '$app/stores';
-    import { onMount } from 'svelte';
-    import { get } from 'svelte/store';
-    import { scenarios } from '$lib/data/scenarios'; // キャラプロンプト一覧
-  
-    let messages: { role: 'user' | 'ai'; text: string }[] = [];
-    let inputText = '';
-    let selectedScenario = null;
-  
-    onMount(() => {
-      const urlParams = new URLSearchParams(get(page).url.search);
-      const scenarioId = urlParams.get('char');
-      selectedScenario = scenarios.find((s) => s.id === scenarioId);
-  
-      if (selectedScenario) {
-        messages.push({
-          role: 'ai',
-          text: `「${selectedScenario.title}」を開始します。相手は ${selectedScenario.character}（${selectedScenario.role}）です。`
-        });
-      }
-    });
-  
-    async function sendMessage() {
-      if (!inputText.trim() || !selectedScenario) return;
-  
-      const userMessage = inputText;
-      messages.push({ role: 'user', text: userMessage });
-      inputText = '';
-  
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: selectedScenario.prompt,
-          userMessage
-        })
-      });
-  
-      const data = await res.json();
-      messages.push({ role: 'ai', text: data.reply });
-    }
-  </script>
-  
-  <style>
-    .chat-log {
-      padding: 1rem;
-      background: #f9f9f9;
-      border-radius: 8px;
-      max-height: 400px;
-      overflow-y: auto;
-      margin-bottom: 1rem;
-    }
-  
-    input {
-      padding: 0.5rem;
-      width: 70%;
-      margin-right: 0.5rem;
-    }
-  
-    button {
-      padding: 0.5rem 1rem;
-    }
-  </style>
-  
-  <h1>会話スタート</h1>
-  <h2>{selectedScenario?.title}</h2>
-  <p>相手：{selectedScenario?.character}（{selectedScenario?.role}）</p>
-  
-  <div class="chat-log">
-    {#each messages as msg}
-      <p><strong>{msg.role === 'user' ? 'あなた' : selectedScenario?.character}：</strong> {msg.text}</p>
-    {/each}
-  </div>
-  
-  <input bind:value={inputText} placeholder="発言を入力..." />
-  <button on:click={sendMessage}>送信</button>
-  
->>>>>>> 1677898 (新しい教習所クイズに差し替え)
